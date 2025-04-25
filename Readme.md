@@ -5,6 +5,7 @@ A voice bot demo that guides callers through a workflow to collect account numbe
 For simplicity, the OpenAI tools validate and return static values. For example, the valid account number is `123` and the due amount is `1005 pounds`.
 
 ## Environment Configuration
+Create a `.env` file and configure the environment variables listed below, or rename the `env-sample` file and fill in the relevant details.
 
 - `PUBLIC_ENDPOINT`: Application endpoint (e.g., `12b4-171-76-82-37.ngrok-free.app`)
 - `YAML_CONFIG_DIR`: Full directory path where prompt configuration files are stored (e.g., `/prompt/config/`)
