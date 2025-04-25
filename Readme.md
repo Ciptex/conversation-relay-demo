@@ -1,6 +1,6 @@
 # Conversation Relay Demo
 
-A voice bot demo that guides callers through a workflow to collect account numbers, select payment methods, and complete payments. This application does not collect sensitive information such as credit card or bank account numbers.
+A twilio conversation relay voice bot demo that guides callers through a workflow to collect account numbers, select payment methods, and complete payments. This application does not collect sensitive information such as credit card or bank account numbers.
 
 For simplicity, the OpenAI tools validate and return static values. For example, the valid account number is `123` and the due amount is `1005 pounds`.
 
@@ -18,6 +18,7 @@ Create a `.env` file and configure the environment variables listed below, or re
 - `TWILIO_ACCOUNT_SID`: Twilio account SID
 
 ## Running the Application
+Download and install golang from https://go.dev/dl/
 
 1. Clone the repository from GitHub:
 
