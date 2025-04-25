@@ -1,0 +1,9 @@
+PUBLIC_ENDPOINT=12b4-171-76-82-99.ngrok-free.app
+YAML_CONFIG_DIR=<path to config file for e.g /home/user/config>
+PROMPT_CONFIG_FILE=payment-bot.yml
+AZURE_OPENAI_ENDPOINT=https://ciptex.openai.azure.com/
+AZURE_OPENAI_KEY=
+AZURE_OPENAI_MODEL=gpt-4o
+AZURE_OPENAI_EMBEDDING_MODEL=text-embedding-ada-002
+AZURE_OPENAI_REGION=eastus
+TWILIO_ACCOUNT_SID=twilio account sid
