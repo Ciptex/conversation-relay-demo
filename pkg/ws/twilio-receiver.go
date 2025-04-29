@@ -99,8 +99,10 @@ func (c *TwilioClient) publish(msg types.TwilioCRInboundPayload, subs []string) 
 	c.hub.Publish(subs, m, false)
 }
 
-func (c *TwilioClient) Respond(msg types.InternalMessage) {
+func (c *TwilioClient) respond(msg types.InternalMessage) {
 	reply := map[string]interface{}{
+		// "type": "end",
+		// "handoffData": "{\"reasonCode\":\"live-agent-handoff\", \"reason\": \"The caller wants to talk to a real person\"}",
 		"type":  "text",
 		"token": msg.Data,
 		"last":  msg.IsLastMessage,

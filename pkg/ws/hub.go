@@ -40,7 +40,7 @@ func (h *Hub) Listen() {
 		select {
 		case msg := <-h.VoiceResponse:
 			if client, ok := h.twiliClients[msg.CallSid]; ok {
-				client.Respond(msg)
+				client.respond(msg)
 			}
 		}
 	}
