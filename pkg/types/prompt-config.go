@@ -1,7 +1,8 @@
 package types
 
 type OpenAIConfig struct {
-	GenericPrompt string `yaml:"genericPrompt"`
+	GenericPrompt   string `yaml:"genericPrompt"`
+	IntentDetection string `yaml:"intentDetection"`
 }
 
 type Config struct {

@@ -22,4 +22,8 @@ func CreateSubscribers(pub *mq.MQPub, repo repo.IRepo, llm llms.ILLM, ctx contex
 	if greetSub := mq.NewSubscriber([]string{types.GreetHandler}, pub.Publisher, span); greetSub != nil {
 		go greetSub.Listen(ctx, handlers.NewGenericHandler(repo, llm))
 	}
+
+	if intentSub := mq.NewSubscriber([]string{types.IntentHandler}, pub.Publisher, span); intentSub != nil {
+		go intentSub.Listen(ctx, handlers.NewIntentHandler(repo, llm))
+	}
 }

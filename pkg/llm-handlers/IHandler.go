@@ -18,6 +18,7 @@ type HandlerType string
 const (
 	GENERIC_HANDLER HandlerType = "GENERIC_HANDLER"
 	GREET_HANDLER   HandlerType = "GREET_HANDLER"
+	INTENT_HANDLER  HandlerType = "INTENT_HANDLER"
 )
 
 type HandlerContext struct {
@@ -35,6 +36,8 @@ func CreateLLMHadler(handlerType HandlerType, accSid, configSid string, context 
 		return newGenericPromptHandler(accSid, configSid, context), nil
 	case GREET_HANDLER:
 		return newGreetPromptHandler(accSid, configSid, context), nil
+	case INTENT_HANDLER:
+		return newIntentHandler(accSid, configSid, context), nil
 	default:
 		return nil, errors.New("unable to find handler for " + string(handlerType))
 	}

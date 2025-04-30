@@ -26,6 +26,7 @@ type InternalMessage struct {
 	SessionId                 string                 `json:"sessionId"`
 	OrgTwilioCRInboundPayload TwilioCRInboundPayload `json:"orgTwilioCRInboundPayload"`
 	IsLastMessage             bool                   `json:"isLastMessage"`
+	AgentTransfer             bool                   `json:"agentTransfer"`
 }
 
 func NewInternalMessage(callSid string, data string) InternalMessage {
