@@ -38,6 +38,10 @@ func (l *LocalRepo) GetAccountConfig(accountSid, configId string) (types.Account
 		AzureOpenAIEmbeddingDeploymentName: os.Getenv("AZURE_OPENAI_EMBEDDING_MODEL"),
 		AzureOpenAIRegion:                  os.Getenv("AZURE_OPENAI_REGION"),
 		PromptConfigFile:                   os.Getenv("PROMPT_CONFIG_FILE"),
+		// TwilioApiKey:                       os.Getenv("TWILIO_API_KEY"),
+		// TwilioApiSecret:                    os.Getenv("TWILIO_API_SECRET"),
+		// TwilioFlowSid:                      os.Getenv("TWILIO_STUDIO_FLOW_SID"),
+		TwilioWorkFlowSid: os.Getenv("TWILIO_WORKFLOW_SID"),
 	}
 	slog.Info("Loaded account config", "accountSid", localAccConfig.AccountSid, "deploymentName", localAccConfig.AzureOpenAIDeploymentName)
 	return localAccConfig, nil

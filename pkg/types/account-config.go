@@ -9,4 +9,9 @@ type AccountConfig struct {
 	AzureOpenAIRegion                  string
 	AzureOpenAIDeploymentName          string
 	AzureOpenAIEmbeddingDeploymentName string
+	TwilioWorkFlowSid                  string
+
+	// TwilioApiKey                       string
+	// TwilioApiSecret                    string
+	// TwilioFlowSid                      string
 }

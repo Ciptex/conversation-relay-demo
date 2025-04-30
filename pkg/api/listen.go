@@ -2,6 +2,7 @@ package api
 
 import (
 	"conversation-relay/pkg/llms"
+	"conversation-relay/pkg/repo"
 	"conversation-relay/pkg/trace"
 	"conversation-relay/pkg/twilio"
 	"conversation-relay/pkg/ws"
@@ -15,14 +16,16 @@ type Api struct {
 	hub    *ws.Hub
 	port   string
 	llm    llms.ILLM
+	repo   repo.IRepo
 }
 
-func NewApi(tracer trace.ITracer, hub *ws.Hub, llm llms.ILLM, port string) *Api {
+func NewApi(tracer trace.ITracer, hub *ws.Hub, llm llms.ILLM, port string, repo repo.IRepo) *Api {
 	return &Api{
 		tracer: tracer,
 		hub:    hub,
 		port:   port,
 		llm:    llm,
+		repo:   repo,
 	}
 }
 
@@ -39,13 +42,14 @@ func (a *Api) Listen() error {
 		accSid := r.FormValue("AccountSid")
 		callSid := r.FormValue("CallSid")
 		span.Info("twiml::request body", "accSid", accSid, "configId", configId, "callSid", callSid)
-		crT := twilio.NewTwiml()
-		twimlStr, err := crT.CreateConversationRelayTwiml(accSid, configId)
+		t := twilio.NewTwiml(span)
+		twimlStr, err := t.CreateConversationRelayTwiml(accSid, configId, r.Host)
 		if err != nil {
 			span.Error("twiml::error creating twiml", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
 		span.Info("twiml::response body", "twiml", twimlStr)
 		w.Header().Set("Content-Type", "application/xml")
 		w.Write([]byte(twimlStr))
@@ -56,6 +60,20 @@ func (a *Api) Listen() error {
 		defer span.Finish()
 		span.Info("twilio websocket request received")
 		ws.StartTwilioHandler(a.hub, w, r)
+	})
+
+	r.HandleFunc("/v1.0/{accSid}/{configId}/queue", func(w http.ResponseWriter, r *http.Request) {
+		span := a.tracer.Start("queue")
+		defer span.Finish()
+		vars := mux.Vars(r)
+		configId := vars["configId"]
+		accSid := vars["accSid"]
+		t := twilio.NewTwiml(span)
+		config, _ := a.repo.GetAccountConfig(accSid, configId)
+		twiml := t.EnqueueCall(config, r.Host)
+		span.Info("QueueTwiml::response body", "twiml", twiml)
+		w.Header().Set("Content-Type", "application/xml")
+		w.Write([]byte(twiml))
 	})
 
 	err := http.ListenAndServe(a.port, r)
