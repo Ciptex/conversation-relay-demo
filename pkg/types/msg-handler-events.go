@@ -5,4 +5,5 @@ const (
 	Logger         string = "logger"
 	GenericHandler string = "generic"
 	GreetHandler   string = "greet"
+	IntentHandler  string = "intent"
 )

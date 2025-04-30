@@ -47,3 +47,11 @@ func (p *prompt) getGenericPrompt(template string) (string, error) {
 	parsedTemplate, _, err := parseTemplate(template, "generic_prompt", sc)
 	return parsedTemplate, err
 }
+
+func (p *prompt) getIntentPrompt(template string) (string, error) {
+	sc := (map[string]interface{}{
+		"message": p.lastMessage,
+	})
+	parsedTemplate, _, err := parseTemplate(template, "intent_prompt", sc)
+	return parsedTemplate, err
+}

@@ -50,9 +50,6 @@ func (g *GenericHandler) Handle(msg types.InternalMessage, publisher chan types.
 	msg.Data = resp
 	msg.Event = types.GenericHandler
 
-	publisher <- types.NewMQMultipPublish([]string{types.Logger}, msg, true)
+	publisher <- types.NewMQMultipPublish([]string{types.Logger, types.IntentHandler}, msg, true)
 	span.Debug("GenericHandler::Handle", "accSid", msg.AccountSid, "callSid", msg.CallSid, "configId", msg.ConfigId)
-	// t := twilio.NewTwiml(span)
-	// conf, _ := g.repo.GetAccountConfig(msg.AccountSid, msg.ConfigId)
-	// // t.UpdateCall(conf, msg.CallSid)
 }

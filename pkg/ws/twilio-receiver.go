@@ -107,6 +107,12 @@ func (c *TwilioClient) respond(msg types.InternalMessage) {
 		"token": msg.Data,
 		"last":  msg.IsLastMessage,
 	}
+	if msg.AgentTransfer {
+		reply = map[string]interface{}{
+			"type":        "end",
+			"handoffData": "{\"reasonCode\":\"live-agent-handoff\", \"reason\": \"The caller wants to talk to a real person\"}",
+		}
+	}
 	replyStr, _ := json.Marshal(reply)
 	c.hub.DB().AddCallContext(c.callSid, "ai", msg.Data)
 	c.conn.WriteMessage(websocket.TextMessage, replyStr)

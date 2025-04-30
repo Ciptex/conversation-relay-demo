@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"conversation-relay/pkg/trace"
 	"conversation-relay/pkg/types"
+	"encoding/json"
 	"fmt"
 	"html/template"
 
@@ -54,6 +55,14 @@ func (t *Twiml) EnqueueCall(config types.AccountConfig, host string) string {
 		Name:        "support",
 		WorkflowSid: config.TwilioWorkFlowSid,
 	}
+	attrs, _ := json.Marshal(map[string]string{
+		"account":       "123",
+		"paymentMethod": "credit card",
+		"amount":        "100",
+	})
+	q.InnerElements = append(q.InnerElements, &twiml.VoiceTask{
+		Body: string(attrs),
+	})
 	verbList := []twiml.Element{q}
 	twimlResult, _ := twiml.Voice(verbList)
 	return twimlResult
