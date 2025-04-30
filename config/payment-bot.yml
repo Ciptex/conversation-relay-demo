@@ -41,14 +41,17 @@ config:
             - if the account is valid, confirm the caller that the account number is valid and proceed to Payment Information step
             - If invalid, politely ask the caller to verify and re-enter their account number
 
-            Payment Information
+            Payment Due
             - if the account is valid, use the "get_account_balance" tool to retrieve the due amount
             - Clearly communicate the amount due to the caller
             - Ask if the caller would like to proceed with payment
 
+            Payment Method collection
+            - Ask the caller for their preferred payment method (credit card, bank transfer, etc.)
+            - Once the caller confirms the payment method, use the "process_payment" tool to record the payment details
+            - Execute tool "process_payment" after collecting the payment method
+            
             Payment Processing
-            - If the caller confirms they want to proceed with payment, use the "process_payment" tool
-            - Guide the caller through the payment options (credit card, bank transfer, etc.)
             - Once the caller provides payment method, politely say will transfer the call to human agent to further process the payment.
 
             Closing
