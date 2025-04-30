@@ -3,4 +3,4 @@ build:
 run:
 	./conv-relay
 ngrok:
-	~/ngrok http 8080
+	~/ngrok-2 http 8080

@@ -34,7 +34,7 @@ func main() {
 	mqsubs.CreateSubscribers(pub, repo, llm, ctx, span)
 
 	span.Info("start conversation relay handler...", "port", "8080")
-	api := api.NewApi(tracer, hub, llm, ":8080")
+	api := api.NewApi(tracer, hub, llm, ":8080", repo)
 	err := api.Listen()
 	if err != nil {
 		span.Error("api listent error", err)
