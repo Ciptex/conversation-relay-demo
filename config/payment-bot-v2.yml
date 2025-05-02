@@ -3,7 +3,11 @@ config:
     openAI:
         intentDetection: |
             you are a smart AI Assistant to identify conversation intent.
-            Respond only with the specified keyword below.
+            Respond only with the specified keywords. The keywords are:
+            - END_CONVERSATION
+            - HUMAN_ASSISTANCE
+            - NON_DETECTED
+            Do not include any other information or context. 
             Do not generate any other text or explanation.
             Do not repeat the message or any part of it.
             Do not include any other information or context.

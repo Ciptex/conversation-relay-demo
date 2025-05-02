@@ -19,7 +19,7 @@ func parseConfig(appConfig types.AccountConfig) (types.PromptConfig, error) {
 		// account specific config file exist use that config
 		configFile = configuredFile
 	}
-	slog.Debug("promptConfig::parseConfig loading yaml config from", "configFilePath", configFilePath+configFile)
+	// slog.Debug("promptConfig::parseConfig loading yaml config from", "configFilePath", configFilePath+configFile)
 	yamlFile, err := os.ReadFile(configFilePath + configFile)
 	if err != nil {
 		slog.Error("promptConfig::parseConfig error parsing config file", "error", err)

@@ -33,7 +33,7 @@ func (g *IntentHandler) Handle(msg types.InternalMessage, publisher chan types.M
 
 	span.SetTag("sid", msg.CallSid)
 	span.SetTag("accSid", msg.AccountSid)
-	span.Dev("IntentHandler::Handle", "sid", msg.CallSid, "Data", msg.Data)
+	// span.Dev("IntentHandler::Handle", "sid", msg.CallSid, "Data", msg.Data)
 	llmHandler, _ := llmhandlers.CreateLLMHadler(llmhandlers.INTENT_HANDLER, msg.AccountSid, msg.ConfigId, &llmhandlers.HandlerContext{
 		Repo:        g.repo,
 		LLM:         g.LLM,
@@ -54,6 +54,6 @@ func (g *IntentHandler) Handle(msg types.InternalMessage, publisher chan types.M
 		msg.AgentTransfer = true
 		// publisher <- types.NewMQMultipPublish([]string{types.Logger}, msg, true)
 	}
-	publisher <- types.NewMQMultipPublish([]string{types.Logger}, msg, false)
+	// publisher <- types.NewMQMultipPublish([]string{types.Logger}, msg, false)
 	// span.Debug("IntentHandler::Handle", "accSid", msg.AccountSid, "callSid", msg.CallSid, "configId", msg.ConfigId)
 }
