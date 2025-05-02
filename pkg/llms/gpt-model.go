@@ -7,7 +7,6 @@ import (
 	"conversation-relay/pkg/types"
 	"encoding/json"
 	"errors"
-	"log"
 
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/openai"
@@ -91,7 +90,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 		case "validate_account":
 			var args map[string]any
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
-				log.Fatal(err)
+				span.Error("GPTModel::executeToolCalls validate_account", err)
 			}
 			resp := llmtools.ValidateAccount(args)
 			currResp = resp
@@ -99,16 +98,51 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 		case "get_account_balance":
 			var args map[string]any
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
-				log.Fatal(err)
+				span.Error("GPTModel::executeToolCalls get_account_balance", err)
 			}
 			resp := llmtools.GetAccBalance(args)
+			currResp = resp
+		case "capture_method_of_payment":
+			var args map[string]any
+			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
+				span.Error("GPTModel::executeToolCalls capture_method_of_payment", err)
+			}
+			resp := llmtools.CaptureMethodOfPayment(args)
+			currResp = resp
+		case "capture_card_number":
+			var args map[string]any
+			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
+				span.Error("GPTModel::executeToolCalls capture_card_number", err)
+			}
+			resp := llmtools.CaptureCard(args)
+			currResp = resp
+		case "capture_cvv_number":
+			var args map[string]any
+			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
+				span.Error("GPTModel::executeToolCalls capture_cvv_number", err)
+			}
+			resp := llmtools.CaptureCVV(args)
+			currResp = resp
+		case "capture_expiry_date":
+			var args map[string]any
+			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
+				span.Error("GPTModel::executeToolCalls capture_expiry_date", err)
+			}
+			resp := llmtools.CaptureExpiry(args)
 			currResp = resp
 		case "process_payment":
 			var args map[string]any
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
-				log.Fatal(err)
+				span.Error("GPTModel::executeToolCalls process_payment", err)
 			}
 			resp := llmtools.ProcessPayments(args)
+			currResp = resp
+		case "payment_confirmation":
+			var args map[string]any
+			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
+				span.Error("GPTModel::executeToolCalls payment_confirmation", err)
+			}
+			resp := llmtools.PaymentConfirmation(args)
 			currResp = resp
 		case "getCurrentWeather":
 			var args struct {
@@ -116,7 +150,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 				Unit     string `json:"unit"`
 			}
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
-				log.Fatal(err)
+				span.Error("GPTModel::executeToolCalls getCurrentWeather", err)
 			}
 
 			response := llmtools.WeatherFunc(args.Location)
@@ -153,11 +187,13 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 		messageHistory = append(messageHistory, toolsResp)
 	}
 	finalResp := currResp
+	_ = finalResp
 	ct, err := llm.GenerateContent(ctx, messageHistory)
 	span.Debug("GPTModel::executeToolCalls final resp", "choicesLen", len(ct.Choices), "choiceContent", ct.Choices[0].Content, "err", err)
 	if err != nil {
+		span.Error("GPTModel::executeToolCalls error in final response", err)
 		return messageHistory, finalResp
 	}
 
-	return messageHistory, ct.Choices[0].Content
+	return g.executeToolCalls(ctx, llm, messageHistory, ct, span)
 }

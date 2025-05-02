@@ -52,8 +52,8 @@ func (g *IntentHandler) Handle(msg types.InternalMessage, publisher chan types.M
 	if resp == "HUMAN_ASSISTANCE" {
 		span.Debug("IntentHandler::Handle human assistance detected", "accSid", msg.AccountSid, "callSid", msg.CallSid, "configId", msg.ConfigId)
 		msg.AgentTransfer = true
-		publisher <- types.NewMQMultipPublish([]string{types.Logger}, msg, true)
+		// publisher <- types.NewMQMultipPublish([]string{types.Logger}, msg, true)
 	}
 	publisher <- types.NewMQMultipPublish([]string{types.Logger}, msg, false)
-	span.Debug("IntentHandler::Handle", "accSid", msg.AccountSid, "callSid", msg.CallSid, "configId", msg.ConfigId)
+	// span.Debug("IntentHandler::Handle", "accSid", msg.AccountSid, "callSid", msg.CallSid, "configId", msg.ConfigId)
 }

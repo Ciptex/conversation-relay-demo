@@ -15,7 +15,8 @@ Create a `.env` file and configure the environment variables listed below, or re
 - `AZURE_OPENAI_MODEL`: Model deployed in Azure portal (e.g., `gpt-4o`)
 - `AZURE_OPENAI_EMBEDDING_MODEL`: Embedding model deployed in Azure portal (e.g., `text-embedding-ada-002`)
 - `AZURE_OPENAI_REGION`: Azure region (e.g., `eastus`)
-- `TWILIO_ACCOUNT_SID`: Twilio account SID
+- `TWILIO_ACCOUNT_SID`: Twilio account Sid
+- `TWILIO_WORKFLOW_SID`: Twilio workflow Sid to create the task to transfer to the agant.
 
 ## Running the Application
 Download and install golang from https://go.dev/dl/
