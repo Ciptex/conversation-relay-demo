@@ -1,6 +1,8 @@
 package llmtools
 
 import (
+	cardprocessing "conversation-relay/pkg/card-processing"
+	"conversation-relay/pkg/repo"
 	"fmt"
 	"time"
 
@@ -25,7 +27,13 @@ func CaptureMethodOfPayment(args map[string]any) string {
 
 func CaptureCard(args map[string]any) string {
 	fmt.Println("Capture card args", args)
-	return "successfull"
+	repo := repo.GetGloabalRepo()
+	paymentMeta := repo.GetPaymentMeta(args["callSid"].(string))
+	res, err := cardprocessing.CaptureCard(args["callSid"].(string), paymentMeta.Epid)
+	if err != nil {
+		return "invalid card number"
+	}
+	return res
 }
 
 func CaptureCVV(args map[string]any) string {

@@ -75,50 +75,40 @@ func (s ConsoleSpan) Info(message string, keyVals ...any) {
 	if s.logLevel < 1 {
 		return
 	}
-	go func() {
-		args := s.msgArgs(keyVals...)
-		slog.Info(message, args...)
-	}()
+	args := s.msgArgs(keyVals...)
+	slog.Info(message, args...)
 }
 
 func (s ConsoleSpan) Debug(message string, keyVals ...any) {
 	if s.logLevel < 3 {
 		return
 	}
-	go func() {
-		args := s.msgArgs(keyVals...)
-		slog.Debug(message, args...)
-	}()
+	args := s.msgArgs(keyVals...)
+	slog.Debug(message, args...)
 }
 
 func (s ConsoleSpan) Dev(message string, keyVals ...any) {
 	if s.logLevel < 4 {
 		return
 	}
-	go func() {
-		args := s.msgArgs(keyVals...)
-		slog.Debug(message, args...)
-	}()
+	args := s.msgArgs(keyVals...)
+	slog.Debug(message, args...)
 }
 
 func (s ConsoleSpan) Warn(message string, keyVals ...any) {
 	if s.logLevel < 2 {
 		return
 	}
-	go func() {
-		args := s.msgArgs(keyVals...)
-		slog.Warn(message, args...)
-	}()
+	args := s.msgArgs(keyVals...)
+	slog.Warn(message, args...)
 }
 
 func (s ConsoleSpan) Error(message string, err error, keyVals ...any) {
-	go func() {
-		withName := keyVals
-		if err != nil {
-			withName = append(withName, "error", err.Error())
-		}
-		slog.Error(message, withName...)
-	}()
+	withName := keyVals
+	if err != nil {
+		withName = append(withName, "error", err.Error())
+	}
+	slog.Error(message, withName...)
 }
 
 func (s ConsoleSpan) Finish() {

@@ -28,7 +28,7 @@ type GPTModel struct {
 	Transcript []types.MessageTranscript
 }
 
-func (g *GPTModel) CreateChatCompletion(config types.AccountConfig, prompt string, span trace.ISpan) (string, error) {
+func (g *GPTModel) CreateChatCompletion(config types.AccountConfig, sid, prompt string, span trace.ISpan) (string, error) {
 	llm, err := g.createClient(config)
 	if err != nil {
 		span.Error("langchain::CreateChatCompletion::error creating openai client", err)
@@ -46,7 +46,7 @@ func (g *GPTModel) CreateChatCompletion(config types.AccountConfig, prompt strin
 
 	resp, err := llm.GenerateContent(ctx, messageHistory, llms.WithTools(llmtools.PaymentBotDef()), llms.WithTemperature(0.0))
 
-	messageHistory, currResp := g.executeToolCalls(ctx, llm, messageHistory, resp, span)
+	messageHistory, currResp := g.executeToolCalls(ctx, sid, llm, messageHistory, resp, span)
 	return currResp, err
 }
 
@@ -78,7 +78,7 @@ func (g *GPTModel) createClient(config types.AccountConfig) (*openai.LLM, error)
 }
 
 // TODO remove hardcoded tool names and use plugin approach
-func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messageHistory []llms.MessageContent, resp *llms.ContentResponse, span trace.ISpan) ([]llms.MessageContent, string) {
+func (g *GPTModel) executeToolCalls(ctx context.Context, sid string, llm *openai.LLM, messageHistory []llms.MessageContent, resp *llms.ContentResponse, span trace.ISpan) ([]llms.MessageContent, string) {
 	span.Debug("GPTModel::Executing tools", "toolsLen", len(resp.Choices[0].ToolCalls))
 	if len(resp.Choices[0].ToolCalls) <= 0 {
 		return messageHistory, resp.Choices[0].Content
@@ -92,6 +92,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
 				span.Error("GPTModel::executeToolCalls validate_account", err)
 			}
+			args["callSid"] = sid
 			resp := llmtools.ValidateAccount(args)
 			currResp = resp
 
@@ -100,6 +101,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
 				span.Error("GPTModel::executeToolCalls get_account_balance", err)
 			}
+			args["callSid"] = sid
 			resp := llmtools.GetAccBalance(args)
 			currResp = resp
 		case "capture_method_of_payment":
@@ -107,6 +109,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
 				span.Error("GPTModel::executeToolCalls capture_method_of_payment", err)
 			}
+			args["callSid"] = sid
 			resp := llmtools.CaptureMethodOfPayment(args)
 			currResp = resp
 		case "capture_card_number":
@@ -114,6 +117,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
 				span.Error("GPTModel::executeToolCalls capture_card_number", err)
 			}
+			args["callSid"] = sid
 			resp := llmtools.CaptureCard(args)
 			currResp = resp
 		case "capture_cvv_number":
@@ -121,6 +125,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
 				span.Error("GPTModel::executeToolCalls capture_cvv_number", err)
 			}
+			args["callSid"] = sid
 			resp := llmtools.CaptureCVV(args)
 			currResp = resp
 		case "capture_expiry_date":
@@ -128,6 +133,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
 				span.Error("GPTModel::executeToolCalls capture_expiry_date", err)
 			}
+			args["callSid"] = sid
 			resp := llmtools.CaptureExpiry(args)
 			currResp = resp
 		case "process_payment":
@@ -135,6 +141,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
 				span.Error("GPTModel::executeToolCalls process_payment", err)
 			}
+			args["callSid"] = sid
 			resp := llmtools.ProcessPayments(args)
 			currResp = resp
 		case "payment_confirmation":
@@ -142,6 +149,7 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 			if err := json.Unmarshal([]byte(toolCall.FunctionCall.Arguments), &args); err != nil {
 				span.Error("GPTModel::executeToolCalls payment_confirmation", err)
 			}
+			args["callSid"] = sid
 			resp := llmtools.PaymentConfirmation(args)
 			currResp = resp
 		case "getCurrentWeather":
@@ -195,5 +203,5 @@ func (g *GPTModel) executeToolCalls(ctx context.Context, llm *openai.LLM, messag
 		return messageHistory, finalResp
 	}
 
-	return g.executeToolCalls(ctx, llm, messageHistory, ct, span)
+	return g.executeToolCalls(ctx, sid, llm, messageHistory, ct, span)
 }

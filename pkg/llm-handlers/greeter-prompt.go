@@ -29,7 +29,7 @@ func (h *GreetPromptHandler) Handle() (string, error) {
 	parsedPrompt, err := prompt.getGenericPrompt(promptConfig.Config.OpenAI.GenericPrompt)
 	// h.context.Span.Debug("GreetPrompt::Handle Parsed Greet Prompt: ", "parsedPrompt", parsedPrompt)
 	model := h.context.LLM.New(types.LLMModelContext{Transcript: h.context.Transcript})
-	response, err := model.CreateChatCompletion(config, parsedPrompt, h.context.Span)
+	response, err := model.CreateChatCompletion(config, h.context.CallSid, parsedPrompt, h.context.Span)
 	if err != nil {
 		return "", err
 	}

@@ -5,8 +5,12 @@ import (
 	"conversation-relay/pkg/repo"
 	"conversation-relay/pkg/trace"
 	"conversation-relay/pkg/twilio"
+	"conversation-relay/pkg/types"
 	"conversation-relay/pkg/ws"
+	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -38,9 +42,19 @@ func (a *Api) Listen() error {
 		span.Info("twiml request received")
 		vars := mux.Vars(r)
 		configId := vars["configId"]
+		// params := r.URL.Query()
 		r.ParseForm()
+		span.Debug("url", "url", r.URL.String())
+
+		epid := extractEpid(r.URL.String())
+		span.Debug("query", "epid", epid)
+
 		accSid := r.FormValue("AccountSid")
 		callSid := r.FormValue("CallSid")
+		onlyEpid := strings.Replace(strings.Split(epid, ";")[0], "FC08", "", 1)
+		a.repo.SetPaymentMeta(callSid, types.PaymentMeta{
+			Epid: onlyEpid,
+		})
 		span.Info("twiml::request body", "accSid", accSid, "configId", configId, "callSid", callSid)
 		t := twilio.NewTwiml(span)
 		twimlStr, err := t.CreateConversationRelayTwiml(accSid, configId, r.Host)
@@ -78,4 +92,33 @@ func (a *Api) Listen() error {
 
 	err := http.ListenAndServe(a.port, r)
 	return err
+}
+
+func extractEpid(urlStr string) string {
+	// Split the URL to get the query part
+	parts := strings.Split(urlStr, "?")
+	if len(parts) < 2 {
+		fmt.Println("No query parameters found")
+		return ""
+	}
+
+	// The query string might contain semicolons, which URL parser treats differently
+	// So let's first split by semicolon to handle the encoding part separately
+	queryParts := strings.Split(parts[1], ";")
+
+	// Parse just the first part of the query string (before any semicolons)
+	queryValues, err := url.ParseQuery(queryParts[0])
+	if err != nil {
+		fmt.Println("Error parsing query:", err)
+		return ""
+	}
+
+	// Extract the epid parameter
+	epid := queryValues.Get("epid")
+	if epid == "" {
+		fmt.Println("epid parameter not found")
+		return ""
+	}
+
+	return epid
 }

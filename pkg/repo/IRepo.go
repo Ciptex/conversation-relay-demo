@@ -10,8 +10,17 @@ type IRepo interface {
 	GetCallContext(callSid string) []types.MessageTranscript
 	GetLastMessage(callSid string) string
 	ResetCallContext(callSid string)
+	SetPaymentMeta(callSid string, paymentMeta types.PaymentMeta)
+	GetPaymentMeta(callSid string) types.PaymentMeta
 }
 
+var globalRepo IRepo
+
 func NewDB() IRepo {
-	return newLocalRepo()
+	globalRepo = newLocalRepo()
+	return globalRepo
+}
+
+func GetGloabalRepo() IRepo {
+	return globalRepo
 }

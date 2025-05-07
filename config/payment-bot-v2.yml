@@ -59,13 +59,12 @@ config:
             - Move to the next step "Capture card number"
             
             Capture Card number
-            - Ask the caller for their card number
-            - Tell the caller to enter the card number using the keypad after the beep
+            - Tell the caller to enter the card number using the keypad after the beep and ask the caller whether they are ready to proceed
             - Execute tool capture_card_number to capture the card number
             - Tool does not need any parameters
             - If the card is invalid, politely ask the caller to verify and re-enter their card number
             - If the card is valid, confirm the caller that the card number is valid and proceed to "Capture CVV number"
-            - Tell the caller to confirm once the card number is entered
+            - Tell the caller to press hash key after entering the card number
 
             Capture CVV number
             - Ask the caller for their card's CVV number
