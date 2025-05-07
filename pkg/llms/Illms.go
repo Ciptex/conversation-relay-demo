@@ -10,7 +10,7 @@ type ILLM interface {
 }
 
 type LLMModel interface {
-	CreateChatCompletion(config types.AccountConfig, prompt string, span trace.ISpan) (string, error)
+	CreateChatCompletion(config types.AccountConfig, sid, prompt string, span trace.ISpan) (string, error)
 	CreateEmbedding(config types.AccountConfig, text string, span trace.ISpan) ([]float32, error)
 }
 

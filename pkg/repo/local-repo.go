@@ -8,29 +8,40 @@ import (
 )
 
 type LocalRepo struct {
-	callContext map[string][]types.MessageTranscript
-	lastMessage map[string]string
+	callContext       map[string][]types.MessageTranscript
+	paymentMeta       map[string]types.PaymentMeta
+	lastMessage       map[string]string
+	localAccConfig    types.AccountConfig
+	localPromptConfig types.PromptConfig
 }
 
 func newLocalRepo() *LocalRepo {
 	return &LocalRepo{
 		callContext: make(map[string][]types.MessageTranscript),
 		lastMessage: make(map[string]string),
+		paymentMeta: make(map[string]types.PaymentMeta),
 	}
 }
 
-var localAccConfig types.AccountConfig
-var localPromptConfig types.PromptConfig
+func (l *LocalRepo) SetPaymentMeta(callSid string, paymentMeta types.PaymentMeta) {
+	l.paymentMeta[callSid] = paymentMeta
+}
+func (l *LocalRepo) GetPaymentMeta(callSid string) types.PaymentMeta {
+	if paymentMeta, ok := l.paymentMeta[callSid]; ok {
+		return paymentMeta
+	}
+	return types.PaymentMeta{}
+}
 
 func (l *LocalRepo) SetAccountConfig(accConfig types.AccountConfig) {
 	// No-op for local repo
 }
 func (l *LocalRepo) GetAccountConfig(accountSid, configId string) (types.AccountConfig, error) {
-	if localAccConfig.AccountSid != "" {
-		return localAccConfig, nil
+	if l.localAccConfig.AccountSid != "" {
+		return l.localAccConfig, nil
 	}
 	// localAccConfig = azure.GetConfig(accountSid, configId)
-	localAccConfig = types.AccountConfig{
+	l.localAccConfig = types.AccountConfig{
 		AccountSid:                         os.Getenv("TWILIO_ACCOUNT_SID"),
 		AzureOpenAIKey:                     os.Getenv("AZURE_OPENAI_KEY"),
 		AzureOpenAIEndpoint:                os.Getenv("AZURE_OPENAI_ENDPOINT"),
@@ -43,15 +54,16 @@ func (l *LocalRepo) GetAccountConfig(accountSid, configId string) (types.Account
 		// TwilioFlowSid:                      os.Getenv("TWILIO_STUDIO_FLOW_SID"),
 		TwilioWorkFlowSid: os.Getenv("TWILIO_WORKFLOW_SID"),
 	}
-	slog.Info("Loaded account config", "accountSid", localAccConfig.AccountSid, "deploymentName", localAccConfig.AzureOpenAIDeploymentName)
-	return localAccConfig, nil
+	slog.Info("Loaded account config", "accountSid", l.localAccConfig.AccountSid, "deploymentName", l.localAccConfig.AzureOpenAIDeploymentName)
+	return l.localAccConfig, nil
 }
 
 func (l *LocalRepo) GetPromptConfig(accountSid, configId string) (types.PromptConfig, error) {
-	if localPromptConfig.Version != "" {
-		return localPromptConfig, nil
+	if l.localPromptConfig.Version != "" {
+		return l.localPromptConfig, nil
 	}
-	localPromptConfig, err := promptconfig.LoadPromptConfig(localAccConfig)
+	localPromptConfig, err := promptconfig.LoadPromptConfig(l.localAccConfig)
+	l.localPromptConfig = localPromptConfig
 	return localPromptConfig, err
 }
 

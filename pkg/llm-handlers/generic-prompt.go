@@ -28,7 +28,7 @@ func (h *GenericPromptHandler) Handle() (string, error) {
 	h.context.Span.Debug("GenericPrompt::Handle transcipt len", "len", len(h.context.Transcript))
 	// h.context.Span.Debug("GenericPrompt::Handle Parsed Generic Prompt: ", "parsedPrompt", parsedPrompt)
 	model := h.context.LLM.New(types.LLMModelContext{Transcript: h.context.Transcript})
-	response, err := model.CreateChatCompletion(config, parsedPrompt, h.context.Span)
+	response, err := model.CreateChatCompletion(config, h.context.CallSid, parsedPrompt, h.context.Span)
 	if err != nil {
 		return "", err
 	}
