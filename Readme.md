@@ -17,6 +17,10 @@ Create a `.env` file and configure the environment variables listed below, or re
 - `AZURE_OPENAI_REGION`: Azure region (e.g., `eastus`)
 - `TWILIO_ACCOUNT_SID`: Twilio account Sid
 - `TWILIO_WORKFLOW_SID`: Twilio workflow Sid to create the task to transfer to the agant.
+- `CARD_EASY_UNAME`: CardEasy username
+- `CARD_EASY_PWD`: CardEasy password
+
+> System use CardEasy gateway to collect card details securely
 
 ## Running the Application
 Download and install golang from https://go.dev/dl/
