@@ -60,7 +60,7 @@ config:
             
             Capture Card number
             - Tell the caller to enter the card number via keypad or speech after the beep and ask the caller whether they are ready to proceed
-            - Execute tool capture_card_number to capture the card number
+            - Execute tool "capture_card_number" to capture the card number
             - Tool does not need any parameters
             - If the card is invalid, politely ask the caller to verify and re-enter their card number
             - If the card is valid, confirm the caller that the card number is valid and proceed to "Capture CVV number"
