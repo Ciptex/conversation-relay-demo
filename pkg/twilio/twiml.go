@@ -22,7 +22,7 @@ func NewTwiml(span trace.ISpan) *Twiml {
 }
 
 // var twiml_1 = `<Response><Connect action="https://webhooks.twilio.com/v1/Accounts/{{.aAccsid}}/Flows/{{.flowSid}}"><ConversationRelay url="wss://{{.url}}"><Parameter name="accSid" value="{{.accSid}}"/><Parameter name="configSid" value="{{.configSid}}"/></ConversationRelay></Connect></Response>`
-var twiml_1 = `<Response><Connect action="https://{{.actionUrl}}"><ConversationRelay url="wss://{{.url}}"><Parameter name="accSid" value="{{.accSid}}"/><Parameter name="configSid" value="{{.configSid}}"/></ConversationRelay></Connect></Response>`
+var twiml_1 = `<Response><Connect><ConversationRelay url="wss://{{.url}}"><Parameter name="accSid" value="{{.accSid}}"/><Parameter name="configSid" value="{{.configSid}}"/></ConversationRelay></Connect></Response>`
 
 func (t *Twiml) CreateConversationRelayTwiml(accSid, congfigSid, host string) (string, error) {
 	sc := (map[string]interface{}{

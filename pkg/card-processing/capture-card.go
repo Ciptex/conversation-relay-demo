@@ -55,7 +55,7 @@ func CaptureCard(callSid, epid string) (string, error) {
 	bodyContent := `<tns:capturePAN>
 	<Customer>ciptex</Customer>
 	<epid>` + epid + `</epid>
-	<capMethod>DTMF</capMethod>
+	<capMethod>ASR.en-UK</capMethod>
 	<beepFlag>BEEP</beepFlag>
 </tns:capturePAN>`
 	soapEnvelope := client.BuildEnvelope(bodyContent, namespaces)
